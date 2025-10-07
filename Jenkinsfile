@@ -60,12 +60,20 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            echo "🎉 Pipeline completed successfully!"
-        }
-        failure {
-            echo "❌ Pipeline failed. Check console logs for details."
-        }
+   post {
+    success {
+        echo "🎉 Pipeline completed successfully!"
+        mail to: 'sambhav674@gmail.com',
+             subject: "Jenkins Build Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+             body: "Good news! The build succeeded.\n\nCheck the details at: ${env.BUILD_URL}"
+    }
+    failure {
+        echo "❌ Pipeline failed. Check console logs for details."
+        mail to: 'sambhav674@gmail.com',
+             subject: "Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+             body: "Unfortunately, the build failed.\n\nCheck console logs here: ${env.BUILD_URL}"
+    }
+}
+
     }
 }
