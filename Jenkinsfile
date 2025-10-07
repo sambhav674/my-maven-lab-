@@ -6,6 +6,7 @@ pipeline {
     }
 
     stages {
+
         stage('Welcome') {
             steps {
                 echo "👋 Welcome to Jenkins Pipeline - Build #${env.BUILD_NUMBER}"
@@ -14,9 +15,20 @@ pipeline {
 
         stage('Clone & Clean') {
             steps {
-                // Clean old workspace folder if it exists
-                bat "rmdir /s /q my-maven-lab-" 
+                // Clean old workspace only if it exists — avoids failure
+                bat '''
+                IF EXIST my-maven-lab- (
+                    echo Deleting existing folder...
+                    rmdir /s /q my-maven-lab-
+                ) ELSE (
+                    echo No old folder found, continuing...
+                )
+                '''
+
+                // Clone fresh repo from GitHub
                 bat "git clone https://github.com/sambhav674/my-maven-lab-.git"
+
+                // Clean Maven project
                 dir("my-maven-lab-") {
                     bat "mvn clean"
                 }
